@@ -7,14 +7,8 @@ import java.awt.FontMetrics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
 
 public class MyWorld extends World {
 
@@ -29,7 +23,7 @@ public class MyWorld extends World {
     AudioClip audio;
 
     private double score = 1000.0;
-    String scoreStr = "SCORE : 00x0000x0000x0000x0000";
+    String scoreStr = "金: 00x0000x0000x0000x0000";
     //1~4...一の位から千の位 5...桁(億とか兆) 6...欲しいかどうか 
     private int phase;
     private boolean isStart = false;
@@ -72,7 +66,8 @@ public class MyWorld extends World {
         //スコアの表示
         ginfo.g.setColor(Color.CYAN);
         ginfo.g.setFont(mfont);
-        scoreStr = "SCORE :" + score;
+        scoreStr = "金:" + score + "億円";
+
         FontMetrics fm = ginfo.g.getFontMetrics();
         ginfo.g.drawString(scoreStr, 10, 590);
 
@@ -118,6 +113,8 @@ public class MyWorld extends World {
                     if (score > 0) {
                         score -= 100;
                         isStart = true;
+                    } else {
+                        GameDisplay.current = MyGameDisplay.this.over;
                     }
                     break;
                 case 1:
@@ -148,7 +145,7 @@ public class MyWorld extends World {
             audio.play();
             ginfo.keystate[KEY_STATE.Z] = false;
             phase++;
-            if (phase > 5) {
+            if (phase > 6) {
                 Result();
                 phase = 0;
                 isOne = false;
@@ -190,7 +187,7 @@ public class MyWorld extends World {
             audio.play();
             ginfo.keystate[KEY_STATE.X] = false;
             phase++;
-            if (phase > 5) {
+            if (phase > 6) {
                 Result();
                 phase = 0;
                 isOne = false;
