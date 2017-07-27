@@ -16,10 +16,11 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 
-public class Stage1 extends Stage {
+public class MyWorld extends World {
 
     private BufferedImage img_chara, img_back, img_shot;
     private BufferedImage img_yen;
+    private BufferedImage img_niku;
     private BufferedImage img_num1[] = new BufferedImage[10];
     private BufferedImage img_num2[] = new BufferedImage[3];
     private BufferedImage img_num3[] = new BufferedImage[4];
@@ -60,6 +61,7 @@ public class Stage1 extends Stage {
         }
         this.img_yen = ImageIO.read(new File("media/yen.png"));
         this.img_back = ImageIO.read(new File("media/main.png"));
+        this.img_niku = ImageIO.read(new File("media/meshi.jpg"));
         audio = Applet.newAudioClip(getClass().getResource("bomb.wav"));
     }
 
@@ -73,6 +75,10 @@ public class Stage1 extends Stage {
         scoreStr = "SCORE :" + score;
         FontMetrics fm = ginfo.g.getFontMetrics();
         ginfo.g.drawString(scoreStr, 10, 590);
+
+        if (score / 100000000 > 5000) {
+            ginfo.g.drawImage(this.img_niku, 30, 100, null);
+        }
 
         if (!isThu && isStart) {
             ginfo.g.drawImage(this.img_num1[rnd.nextInt(10)], 170, 250, null);
@@ -154,12 +160,52 @@ public class Stage1 extends Stage {
                 isStart = false;
             }
         }
+        if (ginfo.keystate[KEY_STATE.X]) {
+            switch (phase) {
+                case 1:
+                    isOne = true;
+                    one = 0;
+                    break;
+                case 2:
+                    isTen = true;
+                    ten = 0;
+                    break;
+                case 3:
+                    isHnd = true;
+                    hnd = 0;
+                    break;
+                case 4:
+                    isThu = true;
+                    thu = 5;
+                    break;
+                case 5:
+                    isKeta = true;
+                    keta = 3;
+                    break;
+                case 6:
+                    isKetsu = true;
+                    ketsu = 0;
+                    break;
+            }
+            audio.play();
+            ginfo.keystate[KEY_STATE.X] = false;
+            phase++;
+            if (phase > 5) {
+                Result();
+                phase = 0;
+                isOne = false;
+                isTen = false;
+                isHnd = false;
+                isThu = false;
+                isKeta = false;
+                isKetsu = false;
+                isStart = false;
+            }
+        }
     }
 
     @Override
     public void init(GraInfo ginfo) {
-        //this.player.position.x = 400;
-        //this.player.position.y = 520;
     }
 
     private void Result() {

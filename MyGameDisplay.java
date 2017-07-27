@@ -14,7 +14,7 @@ public class MyGameDisplay extends GameDisplay {
 
     GameDisplay title, main, over, clear;
     private Font mfont = new Font("Sanserif", Font.BOLD, 50);
-    Stage stage = new Stage1();
+    World stage = new MyWorld();
 
     public MyGameDisplay() {
         this.title = new MyGameTitle();
@@ -86,7 +86,7 @@ public class MyGameDisplay extends GameDisplay {
         public void show(GraInfo ginfo) {
             ginfo.g.setColor(Color.RED);
             ginfo.g.setFont(MyGameDisplay.this.mfont);
-            String str = "ゲームオーバー";
+            String str = "破産しました";
             FontMetrics fm = ginfo.g.getFontMetrics();
             int strw = fm.stringWidth(str) / 2;
             ginfo.g.drawString(str, 400 - strw, 200);
