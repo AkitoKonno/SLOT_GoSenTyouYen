@@ -11,7 +11,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 public class MyWorld extends World {
-
     private BufferedImage img_chara, img_back, img_shot;
     private BufferedImage img_yen;
     private BufferedImage img_niku;
@@ -22,16 +21,15 @@ public class MyWorld extends World {
     //サウンド
     AudioClip audio;
 
-    private double score = 1000.0;
+    //「金」=score
+    private long score = 1000;
     String scoreStr = "金: 00x0000x0000x0000x0000";
     //1~4...一の位から千の位 5...桁(億とか兆) 6...欲しいかどうか 
     private int phase;
     private boolean isStart = false;
 
     Random rnd = new Random();
-
     private Font mfont = new Font("Sanserif", Font.BOLD, 50);
-
     int starttime = 0;
 
     //bool型は押されたかどうかを示す。
@@ -60,20 +58,20 @@ public class MyWorld extends World {
     }
 
     @Override
-    public void draw(GraInfo ginfo) {
+    public boolean draw(GraInfo ginfo) {
+        if (score < 0) {
+            score =1000;
+            return true;
+        }
         ginfo.g.drawImage(this.img_back, 0, 30, null);
 
         //スコアの表示
         ginfo.g.setColor(Color.CYAN);
         ginfo.g.setFont(mfont);
-        scoreStr = "金:" + score + "億円";
+        scoreStr = "金:" + score + "円";
 
         FontMetrics fm = ginfo.g.getFontMetrics();
         ginfo.g.drawString(scoreStr, 10, 590);
-
-        if (score / 100000000 > 5000) {
-            ginfo.g.drawImage(this.img_niku, 30, 100, null);
-        }
 
         if (!isThu && isStart) {
             ginfo.g.drawImage(this.img_num1[rnd.nextInt(10)], 170, 250, null);
@@ -105,16 +103,15 @@ public class MyWorld extends World {
         } else {
             ginfo.g.drawImage(this.img_num2[ketsu], 260, 250, null);
         }
-        //ginfo.g.drawImage(this.img_num1[rnd.nextInt(10)], 70, 250, null);
-        //this.enemy.draw(ginfo, this);
+        if (score / 100000000 > 5000) {
+            ginfo.g.drawImage(this.img_niku, 90, 130, null);
+        }
         if (ginfo.keystate[KEY_STATE.Z]) {
             switch (phase) {
                 case 0:
                     if (score > 0) {
                         score -= 100;
                         isStart = true;
-                    } else {
-                        GameDisplay.current = MyGameDisplay.this.over;
                     }
                     break;
                 case 1:
@@ -157,48 +154,7 @@ public class MyWorld extends World {
                 isStart = false;
             }
         }
-        if (ginfo.keystate[KEY_STATE.X]) {
-            switch (phase) {
-                case 1:
-                    isOne = true;
-                    one = 0;
-                    break;
-                case 2:
-                    isTen = true;
-                    ten = 0;
-                    break;
-                case 3:
-                    isHnd = true;
-                    hnd = 0;
-                    break;
-                case 4:
-                    isThu = true;
-                    thu = 5;
-                    break;
-                case 5:
-                    isKeta = true;
-                    keta = 3;
-                    break;
-                case 6:
-                    isKetsu = true;
-                    ketsu = 0;
-                    break;
-            }
-            audio.play();
-            ginfo.keystate[KEY_STATE.X] = false;
-            phase++;
-            if (phase > 6) {
-                Result();
-                phase = 0;
-                isOne = false;
-                isTen = false;
-                isHnd = false;
-                isThu = false;
-                isKeta = false;
-                isKetsu = false;
-                isStart = false;
-            }
-        }
+        return false;
     }
 
     @Override
@@ -212,20 +168,22 @@ public class MyWorld extends World {
         nowR += ten * 10;
         nowR += hnd * 100;
         nowR += thu * 1000;
+        System.out.println(nowR);
         if (keta == 0) {
             //千
-            nowR *= 0.00001;
+            nowR *= 1000;
         }
         if (keta == 1) {
             //万
-            nowR *= 0.0001;
+            nowR *= 10000;
         }
         if (keta == 2) {
             //億
-            nowR *= 1;
+            nowR *= 100000000;
         }
         if (keta == 3) {
             //兆
+            nowR *= 100000000;
             nowR *= 1000;
         }
 
